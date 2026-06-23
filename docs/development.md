@@ -92,11 +92,21 @@ Enable detailed logging in `appsettings.Development.json` if present, or:
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Add tests for settings or behaviour changes
-4. Ensure `dotnet test` passes
-5. Open a pull request with a clear description
+1. **Create an issue** on the [ArrDash project board](github-workflow.md) before coding:
+
+   ```bash
+   bash scripts/arrdash-issue-create.sh --title "[ArrDash] ..." --body "..." --label area:backend --status Ready
+   ```
+
+2. Branch from `main`: `feature/issue-<id>-short-name`
+3. Implement + tests + docs + CHANGELOG
+4. PR to `main` with `Closes #<id>`
+
+See [github-workflow.md](github-workflow.md) and [documenting-changes.md](documenting-changes.md).
+
+### Cursor agents
+
+Open this repo root in Cursor. Rules in `.cursor/rules/` enforce issue-first development — see [AGENTS.md](../AGENTS.md).
 
 ## Release checklist
 

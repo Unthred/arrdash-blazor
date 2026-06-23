@@ -1,0 +1,61 @@
+---
+description: ArrDash Blazor development conventions
+alwaysApply: true
+---
+
+# ArrDash development
+
+Blazor Server media dashboard — .NET 8, MudBlazor, Docker. Repo: https://github.com/Unthred/arrdash-blazor
+
+## Before you change code
+
+1. **Issue on the board** — see [work-tracking.mdc](work-tracking.mdc).
+2. Read surrounding code; match existing patterns in `Services/` and `Components/`.
+3. Settings changes: update `SettingsHelpTexts.cs`, wire preview (`ScheduleLivePreviewNow`), add/adjust tests in `tests/ArrDash.Tests/`.
+
+## Scope
+
+- Minimize diff — one concern per issue/PR.
+- Do not commit API keys, Plex tokens, or personal FQDNs in tracked files. Use `docker-compose.example.yml` and `example.com` in docs/appsettings.
+- `docker-compose.yml` on the server is **gitignored** — never force-add it.
+
+## URLs in config
+
+Service URLs in app config must be reachable **from the Docker container**. Prefer HTTPS hostnames the container can resolve. Do not use LAN IPs in user-facing links or browser-loaded poster URLs — proxy via ArrDash same-origin routes (`PosterUrls`, `PosterProxyService`).
+
+## Testing
+
+```bash
+dotnet test tests/ArrDash.Tests/ArrDash.Tests.csproj
+```
+
+Required when touching:
+
+- `UserLayoutPreferences` / `LayoutPreferencesService`
+- `ThemeBuilder`, filters, merge logic
+- Settings form wiring (`SettingsConsumptionTests`, `SettingsFormCoverageTests`)
+
+## Deploy (Unraid)
+
+```bash
+cd /path/to/arrdash-blazor
+docker compose build && docker compose up -d
+```
+
+Config persists in mounted `/config` (`user-layout.json`, `service-secrets.json`).
+
+## Key files
+
+| Area | Location |
+|------|----------|
+| Dashboard UI | `Components/Pages/Home.razor` |
+| Settings | `Components/Pages/Settings.razor` |
+| Data collection | `Services/DashboardCollector.cs` |
+| Refresh loop | `Services/MediaAggregatorService.cs` |
+| Upstream clients | `Services/Clients/` |
+| Preferences | `Services/DashboardState.cs`, `LayoutPreferencesService` |
+| Docs | `docs/` |
+
+## Documentation
+
+Update docs in the **same change** when adding settings, env vars, services, or API routes. See [documentation.mdc](documentation.mdc).

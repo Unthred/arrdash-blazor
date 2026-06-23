@@ -16,7 +16,11 @@ Complete reference for installing, configuring, and developing ArrDash.
 ## Development
 
 - [Architecture](architecture.md) — components, services, data flow
-- [Development](development.md) — run locally, tests, project layout
+- [Development](development.md) — run locally, tests, contributing
+- [GitHub workflow](github-workflow.md) — issues and project board (required)
+- [GitHub project setup](github-project-setup.md) — one-time board setup
+- [Documenting changes](documenting-changes.md) — CHANGELOG and doc checklist
+- [AGENTS.md](../AGENTS.md) — Cursor agent rules entry point
 
 ## Related files in the repo
 
@@ -27,3 +31,6 @@ Complete reference for installing, configuring, and developing ArrDash.
 | `Dockerfile` | Multi-stage .NET 8 build |
 | `unraid/my-arrdash.xml` | Unraid Community Applications template stub |
 | `CHECKPOINT.md` | Maintainer notes (optional) |
+| `AGENTS.md` | Cursor / agent workflow entry point |
+| `scripts/arrdash-issue-create.sh` | Create issue + project board card |
+| `scripts/setup-github-arrdash-project.sh` | One-time GitHub project setup |

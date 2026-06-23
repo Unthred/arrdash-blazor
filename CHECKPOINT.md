@@ -29,7 +29,9 @@ curl -s http://127.0.0.1:7979/api/dashboard | jq '.updatedAt, .host'
 | Settings UI | [docs/settings-reference.md](docs/settings-reference.md) |
 | Upstream apps | [docs/services.md](docs/services.md) |
 | HTTP API | [docs/api.md](docs/api.md) |
-| Dev & tests | [docs/development.md](docs/development.md) |
+| Development | [docs/development.md](docs/development.md) |
+| GitHub workflow | [docs/github-workflow.md](docs/github-workflow.md) |
+| Agent rules | [AGENTS.md](AGENTS.md) |
 
 ## Feature checklist (implemented)
 

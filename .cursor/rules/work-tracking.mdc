@@ -1,0 +1,42 @@
+---
+description: GitHub Issues, project board, branches, and commits for ArrDash
+alwaysApply: true
+---
+
+# Work tracking (GitHub)
+
+Uses **GitHub Issues** + **ArrDash** project board — see [docs/github-workflow.md](../docs/github-workflow.md).
+
+**Authority:** `main` on https://github.com/Unthred/arrdash-blazor is the source of truth. Live deploy on Unraid is built from that tree (or local checkout of `main`).
+
+## Issues (required)
+
+- Create an issue **before code** unless the user explicitly says docs-only / typo / chore with no tracking needed.
+- **Always** use `scripts/arrdash-issue-create.sh` (repo issue + project board card). Do **not** use bare `gh issue create`.
+- Move card status as work progresses: Todo → In Progress → Done.
+- Chat is not the system of record — **issues**, **PRs**, and **docs/** are.
+
+## Branches
+
+- **`main`** — integration; deploy from here after merge.
+- **Feature branches** (preferred): `feature/issue-<id>-short-name` off `main`, PR back to **`main`**.
+
+## Commits and PRs
+
+- Commits tied to an issue: prefix with `#<id>:` (example: `#12: Compact status bar tooltips`).
+- PR body includes `Closes #<id>`.
+- Update **CHANGELOG.md** and relevant **docs/** in the same PR when behaviour or config changes.
+- Do not push secrets (`docker-compose.yml` with keys stays gitignored).
+
+## Agents
+
+1. Confirm or create issue on the board.
+2. Implement on a feature branch (or user-directed branch).
+3. Run `dotnet test tests/ArrDash.Tests/ArrDash.Tests.csproj` for logic/settings changes.
+4. Open PR with template checklist filled in.
+5. After merge: user rebuilds container (`docker compose build && docker compose up -d`) unless CI exists.
+
+## Related rules
+
+- [arrdash-development.mdc](arrdash-development.mdc) — code and test conventions
+- [documentation.mdc](documentation.mdc) — when to update docs

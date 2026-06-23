@@ -1,0 +1,91 @@
+name: ArrDash change
+description: Story for a code, UI, or docs change
+title: "[ArrDash] "
+labels:
+  - needs-docker-test
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Every change starts as an issue on the **ArrDash** project board before code is written.
+        See [docs/github-workflow.md](https://github.com/Unthred/arrdash-blazor/blob/main/docs/github-workflow.md).
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What (user-visible outcome)
+      placeholder: e.g. Status bar shows errors in tooltip only
+    validations:
+      required: true
+
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      placeholder: Why is this change needed?
+    validations:
+      required: true
+
+  - type: textarea
+    id: files
+    attributes:
+      label: Files / areas touched
+      placeholder: e.g. ServiceStatusBar.razor, docs/settings-reference.md
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - ui
+        - backend
+        - settings
+        - tests
+        - docs
+        - infra
+        - other
+    validations:
+      required: true
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk
+      options:
+        - low
+        - high
+    validations:
+      required: true
+
+  - type: textarea
+    id: test_plan
+    attributes:
+      label: Test plan
+      description: How to verify after docker compose build / deploy
+      value: |
+        - [ ] `dotnet test tests/ArrDash.Tests/ArrDash.Tests.csproj`
+        - [ ] `docker compose build && docker compose up -d`
+        - [ ] Manual check on dashboard / settings (describe below)
+    validations:
+      required: true
+
+  - type: textarea
+    id: rollback
+    attributes:
+      label: Rollback
+      placeholder: e.g. Revert PR; redeploy previous image
+    validations:
+      required: true
+
+  - type: textarea
+    id: documentation
+    attributes:
+      label: Documentation
+      description: Which docs to update when done
+      value: |
+        - [ ] CHANGELOG.md
+        - [ ] docs/ (see documenting-changes.md)
+    validations:
+      required: false

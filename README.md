@@ -44,6 +44,8 @@ Open **http://localhost:7979**. Further setup (reverse proxy, Unraid, secrets) i
 | [services.md](docs/services.md) | Supported apps and API requirements |
 | [api.md](docs/api.md) | HTTP endpoints |
 | [development.md](docs/development.md) | Local dev, tests, contributing |
+| [github-workflow.md](docs/github-workflow.md) | Issues + project board (required for changes) |
+| [AGENTS.md](AGENTS.md) | Cursor agent entry point |
 
 ## Stack
 

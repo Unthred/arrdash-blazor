@@ -1,0 +1,29 @@
+---
+description: Documentation standards for ArrDash
+globs:
+  - "docs/**/*.md"
+  - "README.md"
+  - "CHANGELOG.md"
+  - "CHECKPOINT.md"
+alwaysApply: false
+---
+
+# Documentation
+
+| Kind | Location |
+|------|----------|
+| Index | [docs/README.md](../docs/README.md) |
+| Workflow | [docs/github-workflow.md](../docs/github-workflow.md) |
+| Changes | [CHANGELOG.md](../CHANGELOG.md), [documenting-changes.md](../docs/documenting-changes.md) |
+| Agent rules | `.cursor/rules/*.mdc` |
+
+Update docs in the **same PR** when altering:
+
+- Settings tabs or preference keys
+- Environment variables or config file layout
+- Supported services or API routes
+- Docker / Unraid deployment steps
+
+For non-trivial behaviour (merge logic, refresh, theme), add a short **Behaviour** note in the relevant doc — not only UI steps.
+
+Issue and PR must reference doc updates in their checklist.

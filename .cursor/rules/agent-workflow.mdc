@@ -1,0 +1,17 @@
+---
+description: Agent workflow triggers for ArrDash
+alwaysApply: true
+---
+
+# Agent workflow
+
+**Issues first:** see [work-tracking.mdc](work-tracking.mdc). No feature work without a board issue unless user waives tracking for a trivial doc typo.
+
+| Situation | Action |
+|-----------|--------|
+| New feature, bugfix, refactor | Create issue via `scripts/arrdash-issue-create.sh`, then implement |
+| User says "just document" / typo | May skip issue if explicitly scoped |
+| Ready to merge | PR with `Closes #N`, CHANGELOG + docs updated |
+| Deploy | User runs `docker compose build && docker compose up -d` on Unraid |
+
+Do not auto-commit or push unless the user asks. Do not merge PRs without user approval.

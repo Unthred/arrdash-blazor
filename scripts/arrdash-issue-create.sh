@@ -1,9 +1,9 @@
 #!/bin/bash
-# Create a GitHub issue on Unthred/arrdash-blazor and add it to the ArrDash project board.
+# Create a GitHub issue on Unthred/ArrDash and add it to the ArrDash project board.
 # Also supports adding existing issues: arrdash-issue-create.sh --add 10
 set -euo pipefail
 
-REPO="Unthred/arrdash-blazor"
+REPO="Unthred/ArrDash"
 PROJECT_OWNER="@me"
 PROJECT_TITLE="ArrDash"
 GH_BIN="${GH_BIN:-/tmp/gh}"
@@ -17,7 +17,7 @@ Usage:
   arrdash-issue-create.sh --title TITLE --body BODY [--label LABEL]... [--status STATUS]
   arrdash-issue-create.sh --add ISSUE_NUM [ISSUE_NUM...] [--status STATUS]
 
-Creates issues on Unthred/arrdash-blazor and adds them to the ArrDash project board.
+Creates issues on Unthred/ArrDash and adds them to the ArrDash project board.
 Default status: Todo. Board statuses: Todo, In Progress, Done.
 
 Examples:

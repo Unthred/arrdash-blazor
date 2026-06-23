@@ -9,8 +9,10 @@ services:
     environment:
       TZ: Europe/London
       ARRDASH_CONFIG_PATH: /config
-      ARRDASH_HOST_LABEL: Unraid
-      ARRDASH_DISK_PATH: /mnt/user
+      # Host metrics — override per platform (Settings → Playback can also set these)
+      ARRDASH_HOST_LABEL: Host
+      ARRDASH_DISK_PATH: /
+      # Unraid example: ARRDASH_HOST_LABEL=Unraid  ARRDASH_DISK_PATH=/mnt/user
       ARRDASH_METRICS_POLL_SECONDS: 2
       SONARR_URL: https://sonarr.example.com
       SONARR_API_KEY: ""

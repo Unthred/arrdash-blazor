@@ -1,9 +1,9 @@
 #!/bin/bash
-# Create GitHub labels and the ArrDash project board for Unthred/arrdash-blazor.
+# Create GitHub labels and the ArrDash project board for Unthred/ArrDash.
 # Requires: GH_TOKEN or /boot/config/scripts/github-ha-project.token
 set -euo pipefail
 
-REPO="Unthred/arrdash-blazor"
+REPO="Unthred/ArrDash"
 OWNER="Unthred"
 PROJECT_OWNER="@me"
 PROJECT_TITLE="ArrDash"

@@ -297,6 +297,8 @@ public sealed class LayoutPreferencesService(IWebHostEnvironment env, ILogger<La
         ShowJellyfinSessions = p.ShowJellyfinSessions,
         HideIdleSessions = p.HideIdleSessions,
         ShowServerMetrics = p.ShowServerMetrics,
+        MetricsHostLabel = p.MetricsHostLabel,
+        MetricsDiskPath = p.MetricsDiskPath,
         EnableClickThrough = p.EnableClickThrough,
         DeepLinkClickThrough = p.DeepLinkClickThrough,
         ExternalLinkTarget = p.ExternalLinkTarget,

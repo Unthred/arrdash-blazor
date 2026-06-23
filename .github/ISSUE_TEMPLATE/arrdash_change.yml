@@ -8,7 +8,7 @@ body:
     attributes:
       value: |
         Every change starts as an issue on the **ArrDash** project board before code is written.
-        See [docs/github-workflow.md](https://github.com/Unthred/arrdash-blazor/blob/main/docs/github-workflow.md).
+        See [docs/github-workflow.md](https://github.com/Unthred/ArrDash/blob/main/docs/github-workflow.md).
 
   - type: textarea
     id: what

@@ -12,12 +12,12 @@ On Unraid, a shared token may already exist at `/boot/config/scripts/github-ha-p
 
 ### 1. PAT permissions
 
-Classic PAT with **`repo`** + **`project`**, or fine-grained with Issues and Projects access on `Unthred/arrdash-blazor`.
+Classic PAT with **`repo`** + **`project`**, or fine-grained with Issues and Projects access on `Unthred/ArrDash`.
 
 ### 2. Run setup
 
 ```bash
-cd /path/to/arrdash-blazor
+cd /path/to/ArrDash
 export GH_TOKEN='github_pat_...'   # optional if token file exists
 bash scripts/setup-github-arrdash-project.sh
 ```
@@ -26,7 +26,7 @@ This creates:
 
 - GitHub labels (`area:*`, `risk:*`, `needs-docker-test`)
 - **ArrDash** project with Status: Todo, In Progress, Done
-- Link between project and `Unthred/arrdash-blazor`
+- Link between project and `Unthred/ArrDash`
 
 ### 3. Find the board
 
@@ -52,7 +52,7 @@ bash scripts/arrdash-issue-create.sh --title "[ArrDash] My change" --body "..." 
 1. GitHub → **Projects** → **New project** → **Board** → name **ArrDash**
 2. Add Status options: Todo, In Progress, Done
 3. Repo → **Settings** → **Labels** — create labels from [github-workflow.md](github-workflow.md)
-4. Link project to `Unthred/arrdash-blazor`
+4. Link project to `Unthred/ArrDash`
 5. Create issues via **ArrDash change** template
 
 ## Related repos
@@ -61,4 +61,4 @@ bash scripts/arrdash-issue-create.sh --title "[ArrDash] My change" --body "..." 
 |------|--------------|---------|
 | HomeAssistant config | `ha-issue-create.sh` | HA Config Pipeline (#2) |
 | ha-staging-kit | `ha-staging-kit-issue-create.sh` | ha-staging-kit (#4) |
-| **arrdash-blazor** | `scripts/arrdash-issue-create.sh` | **ArrDash** |
+| **ArrDash** | `scripts/arrdash-issue-create.sh` | **ArrDash** |

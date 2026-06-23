@@ -48,6 +48,8 @@ public class SettingsFormCoverageTests
         yield return [nameof(UserLayoutPreferences.ShowJellyfinSessions)];
         yield return [nameof(UserLayoutPreferences.HideIdleSessions)];
         yield return [nameof(UserLayoutPreferences.ShowServerMetrics)];
+        yield return [nameof(UserLayoutPreferences.MetricsHostLabel)];
+        yield return [nameof(UserLayoutPreferences.MetricsDiskPath)];
         yield return [nameof(UserLayoutPreferences.MetricsPollIntervalSeconds)];
         yield return [nameof(UserLayoutPreferences.MetricsGraphWindowMinutes)];
         yield return [nameof(UserLayoutPreferences.EnableClickThrough)];
@@ -111,6 +113,6 @@ public class SettingsFormCoverageTests
             dir = Directory.GetParent(dir)?.FullName ?? string.Empty;
         }
 
-        throw new InvalidOperationException("Could not locate arrdash-blazor project root.");
+        throw new InvalidOperationException("Could not locate ArrDash project root.");
     }
 }

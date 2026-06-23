@@ -182,6 +182,8 @@ public sealed class UserLayoutPreferences
     public bool ShowJellyfinSessions { get; set; } = true;
     public bool HideIdleSessions { get; set; }
     public bool ShowServerMetrics { get; set; } = true;
+    public string MetricsHostLabel { get; set; } = "";
+    public string MetricsDiskPath { get; set; } = "";
     public bool EnableClickThrough { get; set; } = true;
     public bool DeepLinkClickThrough { get; set; } = true;
     public ExternalLinkTarget ExternalLinkTarget { get; set; } = ExternalLinkTarget.NewTab;

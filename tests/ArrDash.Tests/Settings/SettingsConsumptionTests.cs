@@ -97,6 +97,6 @@ public class SettingsConsumptionTests
             dir = Directory.GetParent(dir)?.FullName ?? string.Empty;
         }
 
-        throw new InvalidOperationException("Could not locate arrdash-blazor project root.");
+        throw new InvalidOperationException("Could not locate ArrDash project root.");
     }
 }

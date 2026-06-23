@@ -4,13 +4,13 @@ Internal checkpoint for ongoing ArrDash work. User-facing documentation lives in
 
 ## Repository
 
-- **GitHub:** https://github.com/Unthred/arrdash-blazor (public)
+- **GitHub:** https://github.com/Unthred/ArrDash (public)
 - **Branch:** `main`
 
 ## Quick commands
 
 ```bash
-cd /path/to/arrdash-blazor
+cd /path/to/ArrDash
 docker compose build && docker compose up -d
 docker logs arrdash -f
 dotnet test tests/ArrDash.Tests/ArrDash.Tests.csproj

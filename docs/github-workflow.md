@@ -1,6 +1,6 @@
 # GitHub workflow
 
-Repository: [Unthred/arrdash-blazor](https://github.com/Unthred/arrdash-blazor)
+Repository: [Unthred/ArrDash](https://github.com/Unthred/ArrDash)
 
 ## Rule: no work without an issue
 
@@ -117,7 +117,7 @@ Agents read `.cursor/rules/` in this repo:
 | `documentation.mdc` | Doc update expectations |
 | `agent-workflow.mdc` | When to create issues |
 
-Open the **arrdash-blazor** folder as the Cursor workspace (or ensure rules are synced) so agents load these rules.
+Open the **ArrDash** folder as the Cursor workspace (or ensure rules are synced) so agents load these rules.
 
 ## Related
 

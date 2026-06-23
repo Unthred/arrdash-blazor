@@ -318,6 +318,12 @@
                         <SettingField Text="@SettingsHelpTexts.MetricsGraphWindow">
                             <MudNumericField @bind-Value="_metricsGraphWindowMinutes" @bind-Value:after="ScheduleLivePreviewNow" Label="CPU graph window (min)" Variant="Variant.Outlined" Min="0" Max="240" Disabled="@(!_showServerMetrics)" HelperText="0 = default (15 min)" />
                         </SettingField>
+                        <SettingField Text="@SettingsHelpTexts.MetricsHostLabel">
+                            <MudTextField @bind-Value="_metricsHostLabel" @bind-Value:after="ScheduleLivePreviewDebounced" Label="Host label" Variant="Variant.Outlined" Disabled="@(!_showServerMetrics)" Placeholder="Host" />
+                        </SettingField>
+                        <SettingField Text="@SettingsHelpTexts.MetricsDiskPath">
+                            <MudTextField @bind-Value="_metricsDiskPath" @bind-Value:after="ScheduleLivePreviewDebounced" Label="Disk path(s)" Variant="Variant.Outlined" Disabled="@(!_showServerMetrics)" Placeholder="/" HelperText="Comma-separated; mount paths inside the container" />
+                        </SettingField>
                         <SettingField Text="@SettingsHelpTexts.EnableClickThrough">
                             <MudSwitch @bind-Value="_enableClickThrough" @bind-Value:after="ScheduleLivePreviewNow" Color="Color.Primary" Label="Click-through links" />
                         </SettingField>
@@ -495,6 +501,8 @@
     private bool _showJellyfinSessions = true;
     private bool _hideIdleSessions;
     private bool _showServerMetrics = true;
+    private string _metricsHostLabel = "";
+    private string _metricsDiskPath = "";
     private int _metricsPollIntervalSeconds;
     private int _metricsGraphWindowMinutes;
     private bool _enableClickThrough = true;
@@ -667,6 +675,8 @@
         _showJellyfinSessions = prefs.ShowJellyfinSessions;
         _hideIdleSessions = prefs.HideIdleSessions;
         _showServerMetrics = prefs.ShowServerMetrics;
+        _metricsHostLabel = prefs.MetricsHostLabel ?? "";
+        _metricsDiskPath = prefs.MetricsDiskPath ?? "";
         _metricsPollIntervalSeconds = prefs.MetricsPollIntervalSeconds;
         _metricsGraphWindowMinutes = prefs.MetricsGraphWindowMinutes;
         _enableClickThrough = prefs.EnableClickThrough;
@@ -961,6 +971,8 @@
         p.ShowJellyfinSessions = _showJellyfinSessions;
         p.HideIdleSessions = _hideIdleSessions;
         p.ShowServerMetrics = _showServerMetrics;
+        p.MetricsHostLabel = _metricsHostLabel.Trim();
+        p.MetricsDiskPath = _metricsDiskPath.Trim();
         p.MetricsPollIntervalSeconds = Math.Clamp(_metricsPollIntervalSeconds, 0, 60);
         p.MetricsGraphWindowMinutes = Math.Clamp(_metricsGraphWindowMinutes, 0, 240);
         p.EnableClickThrough = _enableClickThrough;

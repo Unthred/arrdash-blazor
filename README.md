@@ -23,8 +23,8 @@
 ## Quick start
 
 ```bash
-git clone https://github.com/Unthred/arrdash-blazor.git
-cd arrdash-blazor
+git clone https://github.com/Unthred/ArrDash.git
+cd ArrDash
 cp docker-compose.example.yml docker-compose.yml
 # Edit docker-compose.yml — set service URLs and API keys
 docker compose build && docker compose up -d

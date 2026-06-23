@@ -5,7 +5,7 @@ alwaysApply: true
 
 # ArrDash development
 
-Blazor Server media dashboard — .NET 8, MudBlazor, Docker. Repo: https://github.com/Unthred/arrdash-blazor
+Blazor Server media dashboard — .NET 8, MudBlazor, Docker. Repo: https://github.com/Unthred/ArrDash
 
 ## Before you change code
 
@@ -38,7 +38,7 @@ Required when touching:
 ## Deploy (Unraid)
 
 ```bash
-cd /path/to/arrdash-blazor
+cd /path/to/ArrDash
 docker compose build && docker compose up -d
 ```
 

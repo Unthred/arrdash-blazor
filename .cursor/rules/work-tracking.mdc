@@ -7,7 +7,7 @@ alwaysApply: true
 
 Uses **GitHub Issues** + **ArrDash** project board — see [docs/github-workflow.md](../docs/github-workflow.md).
 
-**Authority:** `main` on https://github.com/Unthred/arrdash-blazor is the source of truth. Live deploy on Unraid is built from that tree (or local checkout of `main`).
+**Authority:** `main` on https://github.com/Unthred/ArrDash is the source of truth. Live deploy on Unraid is built from that tree (or local checkout of `main`).
 
 ## Issues (required)
 

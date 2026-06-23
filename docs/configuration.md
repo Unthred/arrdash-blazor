@@ -53,9 +53,23 @@ Optional tuning:
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `ARRDASH_HOST_LABEL` | `Host` | Label shown in metrics bar |
-| `ARRDASH_DISK_PATH` | `/` | Path for disk usage (`DriveInfo`) |
-| `ARRDASH_PROC_ROOT` | `/proc` | Override for procfs (rare) |
+| `ARRDASH_DISK_PATH` | `/` (Linux container) | Path(s) for disk usage; comma-separated for multiple mounts |
+| `ARRDASH_PROC_ROOT` | `/proc` | Linux procfs root for CPU and memory |
 | `ARRDASH_METRICS_POLL_SECONDS` | `2` | CPU sample interval (Settings can override) |
+
+Settings → **Playback** can override **Host label** and **Disk path(s)** in `user-layout.json` (takes precedence over env when set).
+
+### Cross-platform notes
+
+| Environment | CPU / memory | Disk | Typical config |
+|-------------|--------------|------|----------------|
+| **Linux Docker** (recommended) | `/proc` inside container | `DriveInfo` on mounted path | `ARRDASH_DISK_PATH=/` or bind-mount host path (e.g. `/mnt/user` on Unraid) |
+| **Unraid** | Same | Array pool via mount | `ARRDASH_HOST_LABEL=Unraid`, `ARRDASH_DISK_PATH=/mnt/user`, mount `/mnt/user:ro` |
+| **TrueNAS / generic NAS** | Same | Pool mount inside container | Set disk path to your mounted data volume |
+| **Windows / macOS Docker Desktop** | Container `/proc` (Linux VM) | Container filesystem unless you bind-mount | Metrics reflect the **Linux container**, not the Windows/macOS host directly |
+| **`dotnet run` on Windows** | Not available (no `/proc`) | `DriveInfo` works | Metrics bar hidden when read fails; use Linux container for full metrics |
+
+To show **host** disk on Docker, bind-mount the path you care about and set `ARRDASH_DISK_PATH` (or Settings) to that mount point inside the container.
 
 For Unraid, mount the array path read-only and set `ARRDASH_DISK_PATH` to the mount inside the container (e.g. `/mnt/user`).
 

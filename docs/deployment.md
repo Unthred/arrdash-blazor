@@ -5,8 +5,8 @@
 1. Clone the repository:
 
    ```bash
-   git clone https://github.com/Unthred/arrdash-blazor.git
-   cd arrdash-blazor
+   git clone https://github.com/Unthred/ArrDash.git
+   cd ArrDash
    ```
 
 2. Create your compose file from the example:
@@ -51,7 +51,7 @@ Config in the mounted volume is preserved across rebuilds.
 1. Build the image on the host (or push to a registry you pull from):
 
    ```bash
-   cd /path/to/arrdash-blazor
+   cd /path/to/ArrDash
    docker compose build
    ```
 

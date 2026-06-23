@@ -1,5 +1,5 @@
 blank_issues_enabled: false
 contact_links:
   - name: ArrDash documentation
-    url: https://github.com/Unthred/arrdash-blazor/blob/main/docs/README.md
+    url: https://github.com/Unthred/ArrDash/blob/main/docs/README.md
     about: Architecture, deployment, settings, and development workflow

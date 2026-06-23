@@ -8,7 +8,7 @@
 ## Run locally
 
 ```bash
-cd arrdash-blazor
+cd ArrDash
 dotnet run --project src/ArrDash/ArrDash.csproj
 ```
 

@@ -34,7 +34,7 @@ flowchart LR
 ## Project layout
 
 ```
-arrdash-blazor/
+ArrDash/
 ├── src/ArrDash/                 # Main web app
 │   ├── Components/
 │   │   ├── Pages/               # Home (dashboard), Settings, Error

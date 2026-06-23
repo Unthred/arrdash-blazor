@@ -22,7 +22,7 @@ See **[docs/github-workflow.md](docs/github-workflow.md)** for the full process.
 
 ## Open in Cursor
 
-Open the **`arrdash-blazor`** repository root as the workspace so `.cursor/rules/` apply automatically.
+Open the **`ArrDash`** repository root as the workspace so `.cursor/rules/` apply automatically.
 
 ## Human docs
 

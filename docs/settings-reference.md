@@ -93,6 +93,8 @@ Per-panel accent used for headings and panel chrome:
 | Show Jellyfin sessions | Now Playing includes Jellyfin |
 | Hide idle sessions | Hide paused / 0% sessions |
 | Show server CPU, memory & disk | Metrics bar under hero |
+| Host label | Metrics bar title (overrides env when set) |
+| Disk path(s) | Comma-separated mount paths inside container (overrides env when set) |
 | Metrics poll interval | CPU sample rate (0 = 2s default) |
 | Metrics graph window | CPU history minutes (0 = 15 min default) |
 | Enable click-through | Click items to open source app |

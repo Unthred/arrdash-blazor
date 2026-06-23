@@ -4,22 +4,20 @@ namespace ArrDash.Services;
 
 public sealed class HostSystemMetricsService
 {
+    private readonly LayoutPreferencesService? _prefs;
     private readonly string _procStatPath;
     private readonly string _procMeminfoPath;
-    private readonly string[] _diskPaths;
-    private readonly string _label;
     private readonly object _cpuLock = new();
     private ulong _prevTotal;
     private ulong _prevIdle;
     private bool _hasCpuSample;
 
-    public HostSystemMetricsService()
+    public HostSystemMetricsService(LayoutPreferencesService prefs)
     {
+        _prefs = prefs;
         var procRoot = Environment.GetEnvironmentVariable("ARRDASH_PROC_ROOT") ?? "/proc";
         _procStatPath = Path.Combine(procRoot, "stat");
         _procMeminfoPath = Path.Combine(procRoot, "meminfo");
-        _diskPaths = ResolveDiskPaths();
-        _label = Environment.GetEnvironmentVariable("ARRDASH_HOST_LABEL") ?? "Server";
     }
 
     public ServerMetrics? Read()
@@ -27,13 +25,13 @@ public sealed class HostSystemMetricsService
         try
         {
             var memory = ReadMemory();
-            var disk = ReadDisk();
+            var disk = ReadDisk(ResolveDiskPaths(_prefs?.Current));
             if (memory is null || disk is null)
                 return null;
 
             var cpu = ReadCpuPercent();
             return new ServerMetrics(
-                _label,
+                ResolveLabel(_prefs?.Current),
                 cpu,
                 memory.Value.UsedPercent,
                 memory.Value.UsedBytes,
@@ -48,9 +46,25 @@ public sealed class HostSystemMetricsService
         }
     }
 
-    private static string[] ResolveDiskPaths()
+    internal static string ResolveLabel(UserLayoutPreferences? p)
     {
-        var configured = Environment.GetEnvironmentVariable("ARRDASH_DISK_PATH");
+        var fromPrefs = p?.MetricsHostLabel?.Trim();
+        if (!string.IsNullOrWhiteSpace(fromPrefs))
+            return fromPrefs;
+
+        var fromEnv = Environment.GetEnvironmentVariable("ARRDASH_HOST_LABEL")?.Trim();
+        if (!string.IsNullOrWhiteSpace(fromEnv))
+            return fromEnv;
+
+        return "Host";
+    }
+
+    internal static string[] ResolveDiskPaths(UserLayoutPreferences? p)
+    {
+        var fromPrefs = p?.MetricsDiskPath?.Trim();
+        var fromEnv = Environment.GetEnvironmentVariable("ARRDASH_DISK_PATH")?.Trim();
+        var configured = !string.IsNullOrWhiteSpace(fromPrefs) ? fromPrefs : fromEnv;
+
         if (!string.IsNullOrWhiteSpace(configured))
         {
             return configured
@@ -59,8 +73,8 @@ public sealed class HostSystemMetricsService
                 .ToArray();
         }
 
-        if (Directory.Exists("/mnt/user"))
-            return ["/mnt/user"];
+        if (Directory.Exists("/"))
+            return ["/"];
 
         return ["/config"];
     }
@@ -139,12 +153,12 @@ public sealed class HostSystemMetricsService
         return (totalBytes, usedBytes, Math.Clamp(usedPercent, 0, 100));
     }
 
-    private (long TotalBytes, long UsedBytes, double UsedPercent)? ReadDisk()
+    private static (long TotalBytes, long UsedBytes, double UsedPercent)? ReadDisk(string[] diskPaths)
     {
         long totalBytes = 0;
         long freeBytes = 0;
 
-        foreach (var path in _diskPaths)
+        foreach (var path in diskPaths)
         {
             if (!Directory.Exists(path))
                 continue;

@@ -51,6 +51,8 @@ public static class SettingsHelpTexts
     public const string ShowJellyfinSessions = "Shows who is watching what on Jellyfin in the Now Playing panel.";
     public const string HideIdleSessions = "Hides sessions that are paused or at 0% progress.";
     public const string ShowServerMetrics = "Shows CPU graph, memory, disk usage, and library counts in the metrics bar.";
+    public const string MetricsHostLabel = "Label shown on the metrics bar (e.g. Host, NAS, Unraid). Leave blank to use the ARRDASH_HOST_LABEL environment variable, then default Host.";
+    public const string MetricsDiskPath = "Path(s) for disk usage, comma-separated for multiple mounts (e.g. / or /mnt/user). Leave blank to use ARRDASH_DISK_PATH env, then default / inside Linux containers.";
     public const string MetricsPollInterval = "How often server CPU and usage rings refresh. 0 uses the default (2 seconds).";
     public const string MetricsGraphWindow = "How many minutes of CPU history the graph displays. 0 uses the default (15 minutes).";
     public const string EnableClickThrough = "Lets you click recent items and library stats to open the source app.";

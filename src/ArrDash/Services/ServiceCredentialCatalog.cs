@@ -26,6 +26,7 @@ public static class ServiceCredentialCatalog
         ("audiobookshelf", "AudioBookShelf", "In AudioBookShelf: Settings → Users → your user → API keys (or Admin → API keys). Paste the Bearer token.", "https://www.audiobookshelf.org/docs"),
         ("slskd", "slskd", "In slskd: Settings → copy the API key (if API auth is enabled).", "https://github.com/slskd/slskd"),
         ("plex", "Plex", "Sign in to Plex → Settings → Account → Authorized devices, or use a token from plex.tv/account. Paste the X-Plex-Token value.", "https://support.plex.tv/articles/204059436-finding-an-authentication-token-x-plex-token/"),
-        ("emby", "Emby", "In Emby: Dashboard → Advanced → API Keys → create or copy an existing key.", "https://emby.media/support/articles/API-Keys.html")
+        ("emby", "Emby", "In Emby: Dashboard → Advanced → API Keys → create or copy an existing key.", "https://emby.media/support/articles/API-Keys.html"),
+        ("jellyfin", "Jellyfin", "In Jellyfin: Dashboard → Advanced → API Keys → create or copy an existing key.", "https://jellyfin.org/docs/general/server/api/")
     ];
 }

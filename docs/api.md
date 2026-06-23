@@ -83,6 +83,7 @@ GET /api/poster/chaptarr/author/{authorId}
 GET /api/poster/audiobookshelf/{itemId}
 GET /api/thumbnail/plex?path={url-encoded-path}
 GET /api/thumbnail/emby/{itemId}
+GET /api/thumbnail/jellyfin/{itemId}
 ```
 
 ## SignalR

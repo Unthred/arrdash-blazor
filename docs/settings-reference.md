@@ -90,6 +90,7 @@ Per-panel accent used for headings and panel chrome:
 |---------|-------------|
 | Show Plex sessions | Now Playing includes Plex |
 | Show Emby sessions | Now Playing includes Emby |
+| Show Jellyfin sessions | Now Playing includes Jellyfin |
 | Hide idle sessions | Hide paused / 0% sessions |
 | Show server CPU, memory & disk | Metrics bar under hero |
 | Metrics poll interval | CPU sample rate (0 = 2s default) |
@@ -135,6 +136,7 @@ Toggle each upstream app **on/off**. Disabled services are not queried and appea
 | lidarr | Lidarr |
 | plex | Plex |
 | emby | Emby |
+| jellyfin | Jellyfin |
 
 slskd appears in credentials but is not a primary panel source.
 

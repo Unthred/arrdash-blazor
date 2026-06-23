@@ -31,7 +31,8 @@ public enum DownloadEvent
 public enum StreamingServer
 {
     Plex,
-    Emby
+    Emby,
+    Jellyfin
 }
 
 public enum ThemePreference
@@ -178,6 +179,7 @@ public sealed class UserLayoutPreferences
     public AudiobookSourceMode AudiobookSource { get; set; } = AudiobookSourceMode.Merge;
     public bool ShowPlexSessions { get; set; } = true;
     public bool ShowEmbySessions { get; set; } = true;
+    public bool ShowJellyfinSessions { get; set; } = true;
     public bool HideIdleSessions { get; set; }
     public bool ShowServerMetrics { get; set; } = true;
     public bool EnableClickThrough { get; set; } = true;

@@ -13,6 +13,7 @@ public sealed class DashboardCollector(
     AudiobookShelfClient audiobookShelf,
     PlexClient plex,
     EmbyClient emby,
+    JellyfinClient jellyfin,
     LayoutPreferencesService prefs,
     MediaServiceOptionsAccessor options,
     HostSystemMetricsService hostMetrics)
@@ -28,8 +29,9 @@ public sealed class DashboardCollector(
         var audiobookShelfTask = FetchIfEnabled("audiobookshelf", audiobookShelf.FetchRecentAsync(fetchLimit, ct));
         var plexTask = FetchSessionsIfEnabled("plex", plex.FetchSessionsAsync(ct));
         var embyTask = FetchSessionsIfEnabled("emby", emby.FetchSessionsAsync(ct));
+        var jellyfinTask = FetchSessionsIfEnabled("jellyfin", jellyfin.FetchSessionsAsync(ct));
 
-        await Task.WhenAll(sonarrTask, radarrTask, lidarrTask, chaptarrTask, audiobookShelfTask, plexTask, embyTask);
+        await Task.WhenAll(sonarrTask, radarrTask, lidarrTask, chaptarrTask, audiobookShelfTask, plexTask, embyTask, jellyfinTask);
 
         var (tvRaw, sonarrHealth) = await sonarrTask;
         var (moviesRaw, radarrHealth) = await radarrTask;
@@ -38,6 +40,7 @@ public sealed class DashboardCollector(
         var (libraryAudiobooks, audiobookShelfHealth) = await audiobookShelfTask;
         var (plexSessions, plexHealth) = await plexTask;
         var (embySessions, embyHealth) = await embyTask;
+        var (jellyfinSessions, jellyfinHealth) = await jellyfinTask;
 
         var p = prefs.Current;
         var tv = RecentItemFilter.Apply(tvRaw, p, "recent-tv");
@@ -45,7 +48,7 @@ public sealed class DashboardCollector(
         var music = RecentItemFilter.Apply(musicRaw, p, "recent-music");
         var audiobooks = ApplyAudiobookSource(chaptarrDownloads, libraryAudiobooks, p);
 
-        var sessions = FilterSessions(plexSessions, embySessions, p);
+        var sessions = FilterSessions(plexSessions, embySessions, jellyfinSessions, p);
 
         var services = new List<ServiceHealth>
         {
@@ -56,6 +59,7 @@ public sealed class DashboardCollector(
             DisabledIfNeeded(lidarrHealth, "lidarr"),
             DisabledIfNeeded(plexHealth, "plex"),
             DisabledIfNeeded(embyHealth, "emby"),
+            DisabledIfNeeded(jellyfinHealth, "jellyfin"),
             new("slskd", "slskd", options.Options.Slskd.IsConfigured, false,
                 options.Options.Slskd.IsConfigured ? null : "API key not configured", null)
         };
@@ -100,6 +104,7 @@ public sealed class DashboardCollector(
     private static IReadOnlyList<ActiveSession> FilterSessions(
         IReadOnlyList<ActiveSession> plex,
         IReadOnlyList<ActiveSession> emby,
+        IReadOnlyList<ActiveSession> jellyfin,
         UserLayoutPreferences p)
     {
         IEnumerable<ActiveSession> sessions = [];
@@ -107,6 +112,8 @@ public sealed class DashboardCollector(
             sessions = sessions.Concat(plex);
         if (p.ShowEmbySessions)
             sessions = sessions.Concat(emby);
+        if (p.ShowJellyfinSessions)
+            sessions = sessions.Concat(jellyfin);
 
         if (p.HideIdleSessions)
             sessions = sessions.Where(s => s.ProgressPercent > 0.5);

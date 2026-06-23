@@ -183,3 +183,87 @@ public sealed class EmbyClient(HttpClient http, MediaServiceOptionsAccessor opti
             externalUrl);
     }
 }
+
+public sealed class JellyfinClient(HttpClient http, MediaServiceOptionsAccessor options)
+{
+    private ServiceEndpoint Jellyfin => options.Options.Jellyfin;
+
+    public bool IsConfigured => Jellyfin.IsConfigured;
+
+    public async Task<(IReadOnlyList<ActiveSession> Sessions, ServiceHealth Health)> FetchSessionsAsync(CancellationToken ct)
+    {
+        if (!IsConfigured)
+            return ([], new ServiceHealth("jellyfin", "Jellyfin", false, false, null, null));
+
+        try
+        {
+            var url = $"{Jellyfin.Url.TrimEnd('/')}/Sessions?api_key={Uri.EscapeDataString(Jellyfin.ApiKey)}";
+            using var response = await http.GetAsync(url, ct);
+            response.EnsureSuccessStatusCode();
+
+            await using var stream = await response.Content.ReadAsStreamAsync(ct);
+            using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+
+            var sessions = new List<ActiveSession>();
+            if (doc.RootElement.ValueKind == JsonValueKind.Array)
+            {
+                foreach (var session in doc.RootElement.EnumerateArray())
+                {
+                    var mapped = MapSession(session);
+                    if (mapped is not null)
+                        sessions.Add(mapped);
+                }
+            }
+
+            return (sessions, new ServiceHealth("jellyfin", "Jellyfin", true, true, null, null));
+        }
+        catch (Exception ex)
+        {
+            return ([], new ServiceHealth("jellyfin", "Jellyfin", true, false, ex.Message, null));
+        }
+    }
+
+    private ActiveSession? MapSession(JsonElement session)
+    {
+        if (!session.TryGetProperty("NowPlayingItem", out var item))
+            return null;
+
+        var id = session.TryGetProperty("Id", out var idEl) ? idEl.GetString() ?? Guid.NewGuid().ToString("N") : Guid.NewGuid().ToString("N");
+        var user = session.TryGetProperty("UserName", out var u) ? u.GetString() ?? "Unknown" : "Unknown";
+        var title = item.TryGetProperty("Name", out var n) ? n.GetString() ?? "Unknown" : "Unknown";
+        var series = item.TryGetProperty("SeriesName", out var sn) ? sn.GetString() : null;
+        var type = item.TryGetProperty("Type", out var t) ? t.GetString() ?? "Video" : "Video";
+
+        double progress = 0;
+        if (session.TryGetProperty("PlayState", out var ps))
+        {
+            var pos = ps.TryGetProperty("PositionTicks", out var pt) ? pt.GetInt64() : 0;
+            var run = item.TryGetProperty("RunTimeTicks", out var rt) ? rt.GetInt64() : 0;
+            if (run > 0)
+                progress = Math.Clamp(pos * 100.0 / run, 0, 100);
+        }
+
+        string? thumbUrl = null;
+        string? externalUrl = null;
+        if (item.TryGetProperty("Id", out var itemId) && itemId.GetString() is { Length: > 0 } jellyfinItemId)
+        {
+            thumbUrl = PosterUrls.JellyfinItem(jellyfinItemId);
+            externalUrl = $"{Jellyfin.Url.TrimEnd('/')}/web/index.html#!/details?id={Uri.EscapeDataString(jellyfinItemId)}";
+        }
+
+        var device = session.TryGetProperty("Client", out var c) ? c.GetString() : null;
+
+        return new ActiveSession(
+            $"jellyfin-{id}",
+            StreamingServer.Jellyfin,
+            user,
+            title,
+            series,
+            type,
+            Math.Round(progress, 1),
+            device,
+            thumbUrl,
+            null,
+            externalUrl);
+    }
+}

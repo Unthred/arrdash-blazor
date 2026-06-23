@@ -303,6 +303,9 @@
                         <SettingField Text="@SettingsHelpTexts.ShowEmbySessions">
                             <MudSwitch @bind-Value="_showEmbySessions" @bind-Value:after="ScheduleLivePreviewNow" Color="Color.Primary" Label="Emby sessions" />
                         </SettingField>
+                        <SettingField Text="@SettingsHelpTexts.ShowJellyfinSessions">
+                            <MudSwitch @bind-Value="_showJellyfinSessions" @bind-Value:after="ScheduleLivePreviewNow" Color="Color.Primary" Label="Jellyfin sessions" />
+                        </SettingField>
                         <SettingField Text="@SettingsHelpTexts.HideIdleSessions">
                             <MudSwitch @bind-Value="_hideIdleSessions" @bind-Value:after="ScheduleLivePreviewNow" Color="Color.Primary" Label="Hide idle (0%)" />
                         </SettingField>
@@ -489,6 +492,7 @@
     private TimeDisplayFormat _timeFormat = TimeDisplayFormat.Relative;
     private bool _showPlexSessions = true;
     private bool _showEmbySessions = true;
+    private bool _showJellyfinSessions = true;
     private bool _hideIdleSessions;
     private bool _showServerMetrics = true;
     private int _metricsPollIntervalSeconds;
@@ -660,6 +664,7 @@
         _timeFormat = prefs.TimeFormat;
         _showPlexSessions = prefs.ShowPlexSessions;
         _showEmbySessions = prefs.ShowEmbySessions;
+        _showJellyfinSessions = prefs.ShowJellyfinSessions;
         _hideIdleSessions = prefs.HideIdleSessions;
         _showServerMetrics = prefs.ShowServerMetrics;
         _metricsPollIntervalSeconds = prefs.MetricsPollIntervalSeconds;
@@ -953,6 +958,7 @@
         p.TimeFormat = _timeFormat;
         p.ShowPlexSessions = _showPlexSessions;
         p.ShowEmbySessions = _showEmbySessions;
+        p.ShowJellyfinSessions = _showJellyfinSessions;
         p.HideIdleSessions = _hideIdleSessions;
         p.ShowServerMetrics = _showServerMetrics;
         p.MetricsPollIntervalSeconds = Math.Clamp(_metricsPollIntervalSeconds, 0, 60);
@@ -994,6 +1000,7 @@
         SlskdApiKey = _credentialInputs.GetValueOrDefault("slskd"),
         PlexToken = _credentialInputs.GetValueOrDefault("plex"),
         EmbyApiKey = _credentialInputs.GetValueOrDefault("emby"),
+        JellyfinApiKey = _credentialInputs.GetValueOrDefault("jellyfin"),
         SonarrUrl = _urlInputs.GetValueOrDefault("sonarr"),
         RadarrUrl = _urlInputs.GetValueOrDefault("radarr"),
         LidarrUrl = _urlInputs.GetValueOrDefault("lidarr"),
@@ -1001,7 +1008,8 @@
         AudiobookShelfUrl = _urlInputs.GetValueOrDefault("audiobookshelf"),
         SlskdUrl = _urlInputs.GetValueOrDefault("slskd"),
         PlexUrl = _urlInputs.GetValueOrDefault("plex"),
-        EmbyUrl = _urlInputs.GetValueOrDefault("emby")
+        EmbyUrl = _urlInputs.GetValueOrDefault("emby"),
+        JellyfinUrl = _urlInputs.GetValueOrDefault("jellyfin")
     };
 
     private static bool HasAnySecretInput(ServiceSecretsFile updates) =>
@@ -1013,6 +1021,7 @@
         || !string.IsNullOrWhiteSpace(updates.SlskdApiKey)
         || !string.IsNullOrWhiteSpace(updates.PlexToken)
         || !string.IsNullOrWhiteSpace(updates.EmbyApiKey)
+        || !string.IsNullOrWhiteSpace(updates.JellyfinApiKey)
         || !string.IsNullOrWhiteSpace(updates.SonarrUrl)
         || !string.IsNullOrWhiteSpace(updates.RadarrUrl)
         || !string.IsNullOrWhiteSpace(updates.LidarrUrl)
@@ -1020,7 +1029,8 @@
         || !string.IsNullOrWhiteSpace(updates.AudiobookShelfUrl)
         || !string.IsNullOrWhiteSpace(updates.SlskdUrl)
         || !string.IsNullOrWhiteSpace(updates.PlexUrl)
-        || !string.IsNullOrWhiteSpace(updates.EmbyUrl);
+        || !string.IsNullOrWhiteSpace(updates.EmbyUrl)
+        || !string.IsNullOrWhiteSpace(updates.JellyfinUrl);
 
     private void Cancel()
     {

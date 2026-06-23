@@ -49,6 +49,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
             ApplyIfSet(_secrets.SlskdApiKey, v => options.Slskd.ApiKey = v);
             ApplyIfSet(_secrets.PlexToken, v => options.Plex.Token = v);
             ApplyIfSet(_secrets.EmbyApiKey, v => options.Emby.ApiKey = v);
+            ApplyIfSet(_secrets.JellyfinApiKey, v => options.Jellyfin.ApiKey = v);
             ApplyIfSet(_secrets.SonarrUrl, v => options.Sonarr.Url = v);
             ApplyIfSet(_secrets.RadarrUrl, v => options.Radarr.Url = v);
             ApplyIfSet(_secrets.LidarrUrl, v => options.Lidarr.Url = v);
@@ -57,6 +58,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
             ApplyIfSet(_secrets.SlskdUrl, v => options.Slskd.Url = v);
             ApplyIfSet(_secrets.PlexUrl, v => options.Plex.Url = v);
             ApplyIfSet(_secrets.EmbyUrl, v => options.Emby.Url = v);
+            ApplyIfSet(_secrets.JellyfinUrl, v => options.Jellyfin.Url = v);
         }
     }
 
@@ -71,6 +73,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
             ["slskd"] = FirstUrl(_secrets.SlskdUrl, options.Slskd.Url),
             ["plex"] = FirstUrl(_secrets.PlexUrl, options.Plex.Url),
             ["emby"] = FirstUrl(_secrets.EmbyUrl, options.Emby.Url),
+            ["jellyfin"] = FirstUrl(_secrets.JellyfinUrl, options.Jellyfin.Url),
         };
 
     public IReadOnlyDictionary<string, bool> GetConfiguredFlags(MediaServiceOptions options) =>
@@ -84,6 +87,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
             ["slskd"] = HasSecret(nameof(ServiceSecretsFile.SlskdApiKey)) || !string.IsNullOrWhiteSpace(options.Slskd.ApiKey),
             ["plex"] = HasSecret(nameof(ServiceSecretsFile.PlexToken)) || !string.IsNullOrWhiteSpace(options.Plex.Token),
             ["emby"] = HasSecret(nameof(ServiceSecretsFile.EmbyApiKey)) || !string.IsNullOrWhiteSpace(options.Emby.ApiKey),
+            ["jellyfin"] = HasSecret(nameof(ServiceSecretsFile.JellyfinApiKey)) || !string.IsNullOrWhiteSpace(options.Jellyfin.ApiKey),
         };
 
     public IReadOnlyDictionary<string, string?> GetMaskedHints()
@@ -100,6 +104,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
                 ["slskd"] = Mask(_secrets.SlskdApiKey),
                 ["plex"] = Mask(_secrets.PlexToken),
                 ["emby"] = Mask(_secrets.EmbyApiKey),
+                ["jellyfin"] = Mask(_secrets.JellyfinApiKey),
             };
         }
     }
@@ -116,6 +121,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
             MergeSecret(updates.SlskdApiKey, v => _secrets.SlskdApiKey = v);
             MergeSecret(updates.PlexToken, v => _secrets.PlexToken = v);
             MergeSecret(updates.EmbyApiKey, v => _secrets.EmbyApiKey = v);
+            MergeSecret(updates.JellyfinApiKey, v => _secrets.JellyfinApiKey = v);
             MergeUrl(updates.SonarrUrl, v => _secrets.SonarrUrl = v);
             MergeUrl(updates.RadarrUrl, v => _secrets.RadarrUrl = v);
             MergeUrl(updates.LidarrUrl, v => _secrets.LidarrUrl = v);
@@ -124,6 +130,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
             MergeUrl(updates.SlskdUrl, v => _secrets.SlskdUrl = v);
             MergeUrl(updates.PlexUrl, v => _secrets.PlexUrl = v);
             MergeUrl(updates.EmbyUrl, v => _secrets.EmbyUrl = v);
+            MergeUrl(updates.JellyfinUrl, v => _secrets.JellyfinUrl = v);
         }
 
         await PersistAsync(ct);
@@ -163,6 +170,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
         nameof(ServiceSecretsFile.SlskdApiKey) => !string.IsNullOrWhiteSpace(_secrets.SlskdApiKey),
         nameof(ServiceSecretsFile.PlexToken) => !string.IsNullOrWhiteSpace(_secrets.PlexToken),
         nameof(ServiceSecretsFile.EmbyApiKey) => !string.IsNullOrWhiteSpace(_secrets.EmbyApiKey),
+        nameof(ServiceSecretsFile.JellyfinApiKey) => !string.IsNullOrWhiteSpace(_secrets.JellyfinApiKey),
         _ => false
     };
 
@@ -204,6 +212,7 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
         SlskdApiKey = s.SlskdApiKey,
         PlexToken = s.PlexToken,
         EmbyApiKey = s.EmbyApiKey,
+        JellyfinApiKey = s.JellyfinApiKey,
         SonarrUrl = s.SonarrUrl,
         RadarrUrl = s.RadarrUrl,
         LidarrUrl = s.LidarrUrl,
@@ -211,7 +220,8 @@ public sealed class ServiceSecretsStore(IWebHostEnvironment env, ILogger<Service
         AudiobookShelfUrl = s.AudiobookShelfUrl,
         SlskdUrl = s.SlskdUrl,
         PlexUrl = s.PlexUrl,
-        EmbyUrl = s.EmbyUrl
+        EmbyUrl = s.EmbyUrl,
+        JellyfinUrl = s.JellyfinUrl
     };
 }
 
@@ -225,6 +235,7 @@ public sealed class ServiceSecretsFile
     public string? SlskdApiKey { get; set; }
     public string? PlexToken { get; set; }
     public string? EmbyApiKey { get; set; }
+    public string? JellyfinApiKey { get; set; }
     public string? SonarrUrl { get; set; }
     public string? RadarrUrl { get; set; }
     public string? LidarrUrl { get; set; }
@@ -233,4 +244,5 @@ public sealed class ServiceSecretsFile
     public string? SlskdUrl { get; set; }
     public string? PlexUrl { get; set; }
     public string? EmbyUrl { get; set; }
+    public string? JellyfinUrl { get; set; }
 }

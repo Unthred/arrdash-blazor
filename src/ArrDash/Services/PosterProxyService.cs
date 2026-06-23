@@ -34,6 +34,8 @@ public sealed class PosterProxyService(IHttpClientFactory httpClientFactory, Med
                 $"{services.Plex.Url.TrimEnd('/')}{pathOrItemId}?X-Plex-Token={Uri.EscapeDataString(services.Plex.Token)}",
             "emby" when services.Emby.IsConfigured && !string.IsNullOrWhiteSpace(pathOrItemId) =>
                 $"{services.Emby.Url.TrimEnd('/')}/Items/{Uri.EscapeDataString(pathOrItemId)}/Images/Primary?api_key={Uri.EscapeDataString(services.Emby.ApiKey)}",
+            "jellyfin" when services.Jellyfin.IsConfigured && !string.IsNullOrWhiteSpace(pathOrItemId) =>
+                $"{services.Jellyfin.Url.TrimEnd('/')}/Items/{Uri.EscapeDataString(pathOrItemId)}/Images/Primary?api_key={Uri.EscapeDataString(services.Jellyfin.ApiKey)}",
             _ => null
         };
 

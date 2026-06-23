@@ -23,6 +23,7 @@ builder.Services.AddHttpClient<ChaptarrClient>(c => c.Timeout = TimeSpan.FromSec
 builder.Services.AddHttpClient<AudiobookShelfClient>(c => c.Timeout = TimeSpan.FromSeconds(15));
 builder.Services.AddHttpClient<PlexClient>(c => c.Timeout = TimeSpan.FromSeconds(15));
 builder.Services.AddHttpClient<EmbyClient>(c => c.Timeout = TimeSpan.FromSeconds(15));
+builder.Services.AddHttpClient<JellyfinClient>(c => c.Timeout = TimeSpan.FromSeconds(15));
 builder.Services.AddHttpClient(nameof(PosterProxyService), c => c.Timeout = TimeSpan.FromSeconds(15));
 builder.Services.AddHttpClient(nameof(ServiceConnectionTester), c => c.Timeout = TimeSpan.FromSeconds(15));
 
@@ -81,6 +82,8 @@ app.MapGet("/api/thumbnail/plex", (string path, PosterProxyService proxy, Cancel
     proxy.FetchStreamingThumbnailAsync("plex", path, ct));
 app.MapGet("/api/thumbnail/emby/{itemId}", (string itemId, PosterProxyService proxy, CancellationToken ct) =>
     proxy.FetchStreamingThumbnailAsync("emby", itemId, ct));
+app.MapGet("/api/thumbnail/jellyfin/{itemId}", (string itemId, PosterProxyService proxy, CancellationToken ct) =>
+    proxy.FetchStreamingThumbnailAsync("jellyfin", itemId, ct));
 
 WarnPrivateServiceUrls(app);
 
@@ -99,6 +102,7 @@ static void WarnPrivateServiceUrls(WebApplication app)
         ("slskd", options.Slskd.Url),
         ("Plex", options.Plex.Url),
         ("Emby", options.Emby.Url),
+        ("Jellyfin", options.Jellyfin.Url),
         ("Tautulli", options.Tautulli.Url),
     };
 
@@ -133,6 +137,8 @@ static void BindEnvironmentOverrides(IConfigurationManager config)
     Set("PLEX_TOKEN", "MediaServices:Plex:Token", Environment.GetEnvironmentVariable("PLEX_TOKEN"));
     Set("EMBY_URL", "MediaServices:Emby:Url", Environment.GetEnvironmentVariable("EMBY_URL"));
     Set("EMBY_API_KEY", "MediaServices:Emby:ApiKey", Environment.GetEnvironmentVariable("EMBY_API_KEY"));
+    Set("JELLYFIN_URL", "MediaServices:Jellyfin:Url", Environment.GetEnvironmentVariable("JELLYFIN_URL"));
+    Set("JELLYFIN_API_KEY", "MediaServices:Jellyfin:ApiKey", Environment.GetEnvironmentVariable("JELLYFIN_API_KEY"));
     Set("TAUTULLI_URL", "MediaServices:Tautulli:Url", Environment.GetEnvironmentVariable("TAUTULLI_URL"));
     Set("TAUTULLI_API_KEY", "MediaServices:Tautulli:ApiKey", Environment.GetEnvironmentVariable("TAUTULLI_API_KEY"));
 

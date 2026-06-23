@@ -27,7 +27,8 @@ public sealed class ServiceConnectionTester(
                 "chaptarr" => await TestArr(options.Chaptarr, input, "Chaptarr", "v1", ct),
                 "audiobookshelf" => await TestAudiobookShelf(options.AudiobookShelf, input, ct),
                 "plex" => await TestPlex(options.Plex, input, ct),
-                "emby" => await TestEmby(options.Emby, input, ct),
+                "emby" => await TestEmbyLike(options.Emby, input, "Emby", ct),
+                "jellyfin" => await TestEmbyLike(options.Jellyfin, input, "Jellyfin", ct),
                 "slskd" => TestSlskd(ResolveEndpoint(options.Slskd, input), "slskd"),
                 _ => (false, "Unknown service")
             };
@@ -134,14 +135,15 @@ public sealed class ServiceConnectionTester(
             : (false, $"HTTP {(int)response.StatusCode}");
     }
 
-    private async Task<(bool Ok, string Message)> TestEmby(
+    private async Task<(bool Ok, string Message)> TestEmbyLike(
         ServiceEndpoint current,
         ServiceTestInput? input,
+        string name,
         CancellationToken ct)
     {
         var endpoint = ResolveEndpoint(current, input);
         if (string.IsNullOrWhiteSpace(endpoint.Url) || string.IsNullOrWhiteSpace(endpoint.ApiKey))
-            return (false, "Emby URL or API key required");
+            return (false, $"{name} URL or API key required");
 
         var client = httpClientFactory.CreateClient(nameof(ServiceConnectionTester));
         var url = $"{endpoint.Url.TrimEnd('/')}/System/Info/Public?api_key={Uri.EscapeDataString(endpoint.ApiKey)}";

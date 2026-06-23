@@ -12,6 +12,7 @@ public sealed class MediaServiceOptions
     public ServiceEndpoint Slskd { get; set; } = new();
     public PlexOptions Plex { get; set; } = new();
     public ServiceEndpoint Emby { get; set; } = new();
+    public ServiceEndpoint Jellyfin { get; set; } = new();
     public ServiceEndpoint Tautulli { get; set; } = new();
     public int PollIntervalSeconds { get; set; } = 30;
     public int RecentLimit { get; set; } = 20;

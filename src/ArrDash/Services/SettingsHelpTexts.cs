@@ -48,6 +48,7 @@ public static class SettingsHelpTexts
 
     public const string ShowPlexSessions = "Shows who is watching what on Plex in the Now Playing panel.";
     public const string ShowEmbySessions = "Shows who is watching what on Emby in the Now Playing panel.";
+    public const string ShowJellyfinSessions = "Shows who is watching what on Jellyfin in the Now Playing panel.";
     public const string HideIdleSessions = "Hides sessions that are paused or at 0% progress.";
     public const string ShowServerMetrics = "Shows CPU graph, memory, disk usage, and library counts in the metrics bar.";
     public const string MetricsPollInterval = "How often server CPU and usage rings refresh. 0 uses the default (2 seconds).";

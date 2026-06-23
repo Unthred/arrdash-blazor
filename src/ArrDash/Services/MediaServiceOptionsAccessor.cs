@@ -38,6 +38,7 @@ public sealed class MediaServiceOptionsAccessor
             AudiobookShelf = CloneEndpoint(_options.Value.AudiobookShelf),
             Slskd = CloneEndpoint(_options.Value.Slskd),
             Emby = CloneEndpoint(_options.Value.Emby),
+            Jellyfin = CloneEndpoint(_options.Value.Jellyfin),
             Tautulli = CloneEndpoint(_options.Value.Tautulli),
             Plex = new PlexOptions
             {

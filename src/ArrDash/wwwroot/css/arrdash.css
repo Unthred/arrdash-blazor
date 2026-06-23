@@ -1615,6 +1615,7 @@ html {
 
 .server-badge.plex { background: rgba(229, 160, 13, 0.85); color: #111; }
 .server-badge.emby { background: rgba(82, 181, 75, 0.9); color: #111; }
+.server-badge.jellyfin { background: rgba(0, 164, 220, 0.9); color: #111; }
 
 .session-body,
 .download-body {

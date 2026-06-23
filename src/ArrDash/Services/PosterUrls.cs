@@ -18,4 +18,6 @@ public static class PosterUrls
         $"/api/thumbnail/plex?path={Uri.EscapeDataString(thumbPath)}";
 
     public static string EmbyItem(string itemId) => $"/api/thumbnail/emby/{itemId}";
+
+    public static string JellyfinItem(string itemId) => $"/api/thumbnail/jellyfin/{itemId}";
 }

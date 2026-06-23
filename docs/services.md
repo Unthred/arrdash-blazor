@@ -18,6 +18,7 @@ ArrDash integrates with the following apps via their HTTP APIs.
 |---------|-----|------------|
 | **Lidarr** | Recent Music | API key |
 | **Emby** | Now Playing | API key |
+| **Jellyfin** | Now Playing | API key |
 | **slskd** | Status / future | API key (optional) |
 | **Tautulli** | Reserved in config | API key (not wired to UI yet) |
 
@@ -42,10 +43,12 @@ Chaptarr history may fail if Chaptarr's database is unhealthy — ArrDash shows 
 2. Set `PLEX_URL` to your server base URL (HTTPS recommended)
 3. Set `PLEX_TOKEN`
 
-### Emby
+### Emby / Jellyfin
 
 1. **Dashboard → Advanced → API Keys**
-2. Set `EMBY_URL` and `EMBY_API_KEY`
+2. Set `EMBY_URL` / `JELLYFIN_URL` and matching API key env vars
+
+Both use the same session and image API shape; ArrDash treats them as separate sources with independent toggles in Settings → Playback.
 
 ## Audiobook merge modes
 
@@ -70,6 +73,7 @@ ArrDash proxies artwork through same-origin URLs:
 | `/api/poster/audiobookshelf/{itemId}` | ABS |
 | `/api/thumbnail/plex?path=…` | Plex |
 | `/api/thumbnail/emby/{itemId}` | Emby |
+| `/api/thumbnail/jellyfin/{itemId}` | Jellyfin |
 
 This avoids browser mixed-content and Local Network Access issues when the dashboard is served on HTTPS.
 

@@ -8,6 +8,7 @@ Format based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Added
 
+- Jellyfin Now Playing support (sessions API, poster proxy, Settings toggle, API keys tab)
 - GitHub workflow: issue template, project board setup, `arrdash-issue-create.sh`, Cursor rules for issue-first development
 - Full documentation set under `docs/`
 

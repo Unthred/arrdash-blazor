@@ -45,6 +45,7 @@ public class SettingsFormCoverageTests
         yield return [nameof(UserLayoutPreferences.TimeFormat)];
         yield return [nameof(UserLayoutPreferences.ShowPlexSessions)];
         yield return [nameof(UserLayoutPreferences.ShowEmbySessions)];
+        yield return [nameof(UserLayoutPreferences.ShowJellyfinSessions)];
         yield return [nameof(UserLayoutPreferences.HideIdleSessions)];
         yield return [nameof(UserLayoutPreferences.ShowServerMetrics)];
         yield return [nameof(UserLayoutPreferences.MetricsPollIntervalSeconds)];

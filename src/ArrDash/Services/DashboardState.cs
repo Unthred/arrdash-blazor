@@ -294,6 +294,7 @@ public sealed class LayoutPreferencesService(IWebHostEnvironment env, ILogger<La
         AudiobookSource = p.AudiobookSource,
         ShowPlexSessions = p.ShowPlexSessions,
         ShowEmbySessions = p.ShowEmbySessions,
+        ShowJellyfinSessions = p.ShowJellyfinSessions,
         HideIdleSessions = p.HideIdleSessions,
         ShowServerMetrics = p.ShowServerMetrics,
         EnableClickThrough = p.EnableClickThrough,

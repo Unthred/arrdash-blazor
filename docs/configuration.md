@@ -38,6 +38,7 @@ Each service uses a URL and credential env var:
 | slskd | `SLSKD_URL` | `SLSKD_API_KEY` |
 | Plex | `PLEX_URL` | `PLEX_TOKEN` |
 | Emby | `EMBY_URL` | `EMBY_API_KEY` |
+| Jellyfin | `JELLYFIN_URL` | `JELLYFIN_API_KEY` |
 | Tautulli | `TAUTULLI_URL` | `TAUTULLI_API_KEY` |
 
 Optional tuning:

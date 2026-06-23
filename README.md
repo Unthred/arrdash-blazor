@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-**ArrDash** is a [Blazor Server](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) dashboard for homelab media stacks. It aggregates recent downloads from the *arr apps, audiobooks from Chaptarr and AudioBookShelf, music from Lidarr, and live playback from Plex and Emby — in one configurable UI.
+**ArrDash** is a [Blazor Server](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor) dashboard for homelab media stacks. It aggregates recent downloads from the *arr apps, audiobooks from Chaptarr and AudioBookShelf, music from Lidarr, and live playback from Plex, Emby, and Jellyfin — in one configurable UI.
 
 ![.NET 8](https://img.shields.io/badge/.NET-8.0-512BD4)
 ![MudBlazor](https://img.shields.io/badge/UI-MudBlazor-594AE2)
@@ -12,7 +12,7 @@
 | Area | What you get |
 |------|----------------|
 | **Recent media** | TV (Sonarr), movies (Radarr), audiobooks (Chaptarr + ABS), music (Lidarr) |
-| **Now playing** | Live Plex and Emby sessions with progress |
+| **Now playing** | Live Plex, Emby, and Jellyfin sessions with progress |
 | **Layout** | Panel order, hide/show, Cards / List / Table per panel |
 | **Appearance** | Light / dark / system theme, colours, density, poster size |
 | **Kiosk** | Full-screen TV mode, panel rotation, screensaver |

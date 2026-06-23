@@ -110,6 +110,7 @@ public sealed class ServiceCredentialInput
     public string SlskdApiKey { get; set; } = "";
     public string PlexToken { get; set; } = "";
     public string EmbyApiKey { get; set; } = "";
+    public string JellyfinApiKey { get; set; } = "";
 }
 
 public sealed class ServiceUrlInput
@@ -122,6 +123,7 @@ public sealed class ServiceUrlInput
     public string SlskdUrl { get; set; } = "";
     public string PlexUrl { get; set; } = "";
     public string EmbyUrl { get; set; } = "";
+    public string JellyfinUrl { get; set; } = "";
 }
 
 public static class PanelCatalog

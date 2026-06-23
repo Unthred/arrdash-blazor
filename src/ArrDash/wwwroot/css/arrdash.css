@@ -205,6 +205,14 @@ html {
     flex-shrink: 0;
 }
 
+.arrdash-appbar .header-icon-btn {
+    color: var(--mud-palette-appbar-text, var(--mud-palette-text-primary)) !important;
+}
+
+.arrdash-appbar .header-icon-btn .mud-icon-root {
+    color: inherit;
+}
+
 .arrdash-segmented-toggle {
     flex-shrink: 0;
     --segmented-toggle-height: 28px;
@@ -1037,6 +1045,99 @@ html {
     padding: 0;
     position: relative;
     z-index: 1;
+    overflow: visible;
+}
+
+.episode-badge-number {
+    position: relative;
+    z-index: 1;
+}
+
+.episode-badge-status {
+    position: absolute;
+    right: -4px;
+    bottom: -4px;
+    width: calc(var(--episode-badge-size, 1.4rem) * 0.62);
+    height: calc(var(--episode-badge-size, 1.4rem) * 0.62);
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mud-palette-surface);
+    border: 1px solid var(--mud-palette-divider);
+    color: var(--mud-palette-text-primary);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+    pointer-events: none;
+    z-index: 2;
+}
+
+.episode-badge-status .mud-icon-root {
+    font-size: calc(var(--episode-badge-size, 1.4rem) * 0.42);
+}
+
+.episode-badge-phase-searching {
+    border-style: solid;
+    border-color: color-mix(in srgb, #f59e0b 70%, var(--mud-palette-divider));
+    color: var(--mud-palette-text-primary);
+    opacity: 1;
+}
+
+.episode-badge-phase-searching .episode-badge-status {
+    background: #f59e0b;
+    border-color: color-mix(in srgb, #f59e0b 80%, #ffffff);
+    color: #111827;
+    animation: episode-search-pulse 1.4s ease-in-out infinite;
+}
+
+.episode-badge-phase-downloading {
+    border-style: solid;
+    border-color: color-mix(in srgb, #35c5f4 70%, var(--mud-palette-divider));
+    color: var(--mud-palette-text-primary);
+    opacity: 1;
+}
+
+.episode-badge-phase-downloading .episode-badge-status {
+    background: #35c5f4;
+    border-color: color-mix(in srgb, #35c5f4 80%, #ffffff);
+    color: #0f172a;
+}
+
+.episode-badge-phase-imported {
+    border-style: solid;
+    border-color: color-mix(in srgb, #22c55e 70%, var(--mud-palette-divider));
+}
+
+.episode-badge-phase-imported .episode-badge-status {
+    background: #22c55e;
+    border-color: color-mix(in srgb, #22c55e 80%, #ffffff);
+    color: #052e16;
+}
+
+.episode-badge-phase-notfound {
+    border-style: solid;
+    border-color: color-mix(in srgb, #ef4444 55%, var(--mud-palette-divider));
+}
+
+.episode-badge-phase-notfound .episode-badge-status {
+    background: #ef4444;
+    border-color: color-mix(in srgb, #ef4444 80%, #ffffff);
+    color: #fff;
+}
+
+.episode-badge-phase-timedout {
+    border-style: solid;
+    border-color: color-mix(in srgb, #f97316 60%, var(--mud-palette-divider));
+}
+
+.episode-badge-phase-timedout .episode-badge-status {
+    background: #f97316;
+    border-color: color-mix(in srgb, #f97316 80%, #ffffff);
+    color: #111827;
+}
+
+@keyframes episode-search-pulse {
+    0%, 100% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.08); opacity: 0.88; }
 }
 
 .episode-badge-action:hover:not(:disabled) {
@@ -1048,6 +1149,20 @@ html {
 .episode-badge-searching {
     opacity: 0.55;
     cursor: wait;
+}
+
+.episode-badge-tooltip-anchor {
+    display: inline-flex;
+}
+
+.episode-badge-tooltip {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 220px;
+    font-size: 0.78rem;
+    line-height: 1.35;
+    text-align: left;
 }
 
 .kiosk-grid {

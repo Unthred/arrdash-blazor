@@ -23,6 +23,15 @@ public sealed class ServiceCredentialsPreviewService
 
     public bool HasChanges => _overlay is not null;
 
+    public ServiceSecretsFile? TakePendingUpdates()
+    {
+        var overlay = _overlay;
+        _overlay = null;
+        if (overlay is not null)
+            Changed?.Invoke();
+        return overlay;
+    }
+
     public void ApplyTo(MediaServiceOptions options)
     {
         if (_overlay is null)

@@ -145,10 +145,15 @@ public sealed class DashboardCollector(
             : health with { Configured = false, Online = false, Error = "Disabled in settings" };
 }
 
+public interface IDashboardRefresher
+{
+    Task RefreshAsync(CancellationToken ct);
+}
+
 public sealed class DashboardRefreshService(
     DashboardCollector collector,
     DashboardState state,
-    IHubContext<DashboardHub> hub)
+    IHubContext<DashboardHub> hub) : IDashboardRefresher
 {
     public async Task RefreshAsync(CancellationToken ct)
     {

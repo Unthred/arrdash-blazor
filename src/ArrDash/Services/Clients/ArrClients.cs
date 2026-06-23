@@ -190,8 +190,18 @@ public abstract class ArrClientBase
     }
 }
 
+public interface ISonarrEpisodeSearchMonitor
+{
+    bool IsConfigured { get; }
+    Task<string?> GetCommandStatusAsync(int commandId, CancellationToken ct);
+    Task<bool> GetEpisodeHasFileAsync(int seriesId, int seasonNumber, int episodeNumber, CancellationToken ct);
+    Task<bool> IsEpisodeInQueueAsync(int episodeId, CancellationToken ct);
+    Task<bool> HasRecentGrabAsync(int episodeId, DateTimeOffset since, CancellationToken ct);
+}
+
 public sealed class SonarrClient(HttpClient http, MediaServiceOptionsAccessor options)
-    : ArrClientBase(http, options, o => o.Sonarr, "v3", MediaSource.Sonarr, MediaType.Tv)
+    : ArrClientBase(http, options, o => o.Sonarr, "v3", MediaSource.Sonarr, MediaType.Tv),
+      ISonarrEpisodeSearchMonitor
 {
     private sealed record ParsedHistoryEntry(
         int HistoryId,
@@ -332,20 +342,20 @@ public sealed class SonarrClient(HttpClient http, MediaServiceOptionsAccessor op
         }
     }
 
-    public async Task<(bool Ok, string Message)> SearchEpisodeAsync(
+    public async Task<(bool Ok, string Message, int? EpisodeId, int? CommandId)> SearchEpisodeAsync(
         int seriesId,
         int seasonNumber,
         int episodeNumber,
         CancellationToken ct)
     {
         if (!IsConfigured)
-            return (false, "Sonarr is not configured.");
+            return (false, "Sonarr is not configured.", null, null);
 
         try
         {
             var episodes = await GetJsonAsync($"/api/v3/episode?seriesId={seriesId}", ct);
             if (episodes is null || episodes.Value.ValueKind != JsonValueKind.Array)
-                return (false, "Could not load episodes from Sonarr.");
+                return (false, "Could not load episodes from Sonarr.", null, null);
 
             int? episodeId = null;
             foreach (var episode in episodes.Value.EnumerateArray())
@@ -365,17 +375,113 @@ public sealed class SonarrClient(HttpClient http, MediaServiceOptionsAccessor op
             }
 
             if (episodeId is null)
-                return (false, $"S{seasonNumber:00}E{episodeNumber:00} was not found in Sonarr.");
+                return (false, $"S{seasonNumber:00}E{episodeNumber:00} was not found in Sonarr.", null, null);
 
-            var ok = await PostCommandAsync(new { name = "EpisodeSearch", episodeIds = new[] { episodeId.Value } }, ct);
+            var (ok, commandId) = await PostCommandAsync(
+                new { name = "EpisodeSearch", episodeIds = new[] { episodeId.Value } },
+                ct);
             return ok
-                ? (true, $"Sonarr is searching for S{seasonNumber:00}E{episodeNumber:00}.")
-                : (false, "Sonarr rejected the episode search command.");
+                ? (true, $"Sonarr is searching for S{seasonNumber:00}E{episodeNumber:00}.", episodeId, commandId)
+                : (false, "Sonarr rejected the episode search command.", episodeId, null);
         }
         catch (Exception ex)
         {
-            return (false, ex.Message);
+            return (false, ex.Message, null, null);
         }
+    }
+
+    public async Task<string?> GetCommandStatusAsync(int commandId, CancellationToken ct)
+    {
+        if (!IsConfigured)
+            return null;
+
+        var command = await GetJsonAsync($"/api/v3/command/{commandId}", ct);
+        if (command is null)
+            return null;
+
+        return command.Value.TryGetProperty("status", out var statusEl)
+            ? statusEl.GetString()
+            : null;
+    }
+
+    public async Task<bool> GetEpisodeHasFileAsync(
+        int seriesId,
+        int seasonNumber,
+        int episodeNumber,
+        CancellationToken ct)
+    {
+        if (!IsConfigured)
+            return false;
+
+        var episodes = await GetJsonAsync($"/api/v3/episode?seriesId={seriesId}", ct);
+        if (episodes is null || episodes.Value.ValueKind != JsonValueKind.Array)
+            return false;
+
+        foreach (var episode in episodes.Value.EnumerateArray())
+        {
+            if (!episode.TryGetProperty("seasonNumber", out var seasonEl) ||
+                seasonEl.GetInt32() != seasonNumber)
+                continue;
+
+            if (!episode.TryGetProperty("episodeNumber", out var numberEl) ||
+                numberEl.GetInt32() != episodeNumber)
+                continue;
+
+            return episode.TryGetProperty("hasFile", out var hasFileEl) && hasFileEl.GetBoolean();
+        }
+
+        return false;
+    }
+
+    public async Task<bool> IsEpisodeInQueueAsync(int episodeId, CancellationToken ct)
+    {
+        if (!IsConfigured)
+            return false;
+
+        var queue = await GetJsonAsync("/api/v3/queue", ct);
+        if (queue is null || queue.Value.ValueKind != JsonValueKind.Array)
+            return false;
+
+        foreach (var item in queue.Value.EnumerateArray())
+        {
+            if (item.TryGetProperty("episodeId", out var episodeEl) && episodeEl.GetInt32() == episodeId)
+                return true;
+        }
+
+        return false;
+    }
+
+    public async Task<bool> HasRecentGrabAsync(int episodeId, DateTimeOffset since, CancellationToken ct)
+    {
+        if (!IsConfigured)
+            return false;
+
+        var history = await GetJsonAsync($"/api/v3/history?episodeId={episodeId}&pageSize=20&sortKey=date&sortDirection=descending", ct);
+        if (history is null)
+            return false;
+
+        var records = history.Value.TryGetProperty("records", out var recordsEl)
+            ? recordsEl
+            : history.Value;
+
+        if (records.ValueKind != JsonValueKind.Array)
+            return false;
+
+        foreach (var record in records.EnumerateArray())
+        {
+            var eventType = record.TryGetProperty("eventType", out var ev) ? ev.GetString() : null;
+            if (!string.Equals(eventType, "grabbed", StringComparison.OrdinalIgnoreCase))
+                continue;
+
+            if (!record.TryGetProperty("date", out var dateEl) ||
+                !DateTimeOffset.TryParse(dateEl.GetString(), out var date))
+                continue;
+
+            if (date >= since)
+                return true;
+        }
+
+        return false;
     }
 
     public async Task<LibraryStatItem?> FetchLibraryStatsAsync(CancellationToken ct)
@@ -626,14 +732,22 @@ public sealed class SonarrClient(HttpClient http, MediaServiceOptionsAccessor op
         return lookup;
     }
 
-    private async Task<bool> PostCommandAsync(object body, CancellationToken ct)
+    private async Task<(bool Ok, int? CommandId)> PostCommandAsync(object body, CancellationToken ct)
     {
         var url = $"{Options.Url.TrimEnd('/')}/api/v3/command";
         using var request = new HttpRequestMessage(HttpMethod.Post, url);
         request.Headers.Add("X-Api-Key", Options.ApiKey);
         request.Content = JsonContent.Create(body);
         using var response = await Http.SendAsync(request, ct);
-        return response.IsSuccessStatusCode;
+        if (!response.IsSuccessStatusCode)
+            return (false, null);
+
+        await using var stream = await response.Content.ReadAsStreamAsync(ct);
+        using var doc = await JsonDocument.ParseAsync(stream, cancellationToken: ct);
+        int? commandId = doc.RootElement.TryGetProperty("id", out var idEl)
+            ? idEl.GetInt32()
+            : null;
+        return (true, commandId);
     }
 
     private async Task<string?> GetVersionAsync(CancellationToken ct)

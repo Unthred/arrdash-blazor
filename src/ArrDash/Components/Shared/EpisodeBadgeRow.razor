@@ -2,10 +2,12 @@
 @using ArrDash.Services
 @using ArrDash.Services.Clients
 @inject SonarrClient Sonarr
+@inject EpisodeSearchTrackerService SearchTracker
 @inject LayoutPreferencesService Prefs
 @inject ExternalLinkService Links
 @inject MediaServiceOptionsAccessor Options
 @inject ISnackbar Snackbar
+@implements IDisposable
 
 @{
     var episodes = DownloadDisplayHelper.ResolveBadgeEpisodeNumbers(Item);
@@ -29,7 +31,78 @@
         <div class="episode-badge-panel">
             @foreach (var episode in pageEpisodes)
             {
-                @RenderEpisodeBadge(episode)
+                var recentEpisodes = Item.EpisodeNumbers ?? [];
+                var onDiskEpisodes = Item.OnDiskEpisodeNumbers;
+                var unairedEpisodes = Item.UnairedEpisodeNumbers;
+                var unaired = DownloadDisplayHelper.IsUnairedEpisode(episode, unairedEpisodes);
+                var missing = !unaired &&
+                              DownloadDisplayHelper.IsMissingOnDisk(episode, onDiskEpisodes, recentEpisodes);
+                var recent = !unaired && !missing && recentEpisodes.Contains(episode);
+                var airLabel = DownloadDisplayHelper.GetEpisodeAirLabel(episode, Item.EpisodeAirDates);
+                var searchStatus = Item.SeriesId is int seriesId && Item.SeasonNumber is int season && missing
+                    ? SearchTracker.GetStatus(seriesId, season, episode)
+                    : null;
+                var searchLabel = Item.SeasonNumber is int seasonLabel
+                    ? FormatEpisodeSearchLabel(seasonLabel, episode)
+                    : $"E{episode:D2}";
+
+                @if (ShowMissingEpisodes && missing && Item.SeriesId is int missingSeriesId && Item.SeasonNumber is int missingSeason)
+                {
+                    var activeSearch = _searchingEpisode == episode || (searchStatus?.IsActive ?? false);
+                    var phaseClass = _searchingEpisode == episode && searchStatus is null
+                        ? "episode-badge-phase-searching"
+                        : EpisodeSearchDisplayHelper.GetPhaseClass(searchStatus?.Phase);
+                    var tooltipLines = EpisodeSearchDisplayHelper.GetTooltipLines(
+                        searchStatus?.Phase ?? (_searchingEpisode == episode ? EpisodeSearchPhase.Searching : null),
+                        searchLabel,
+                        searchStatus?.UpdatedAt,
+                        Prefs.Current.MissingEpisodeClickAction);
+                    var tooltipSummary = EpisodeSearchDisplayHelper.GetTooltipSummary(tooltipLines);
+
+                    <MudTooltip Placement="Placement.Top" Arrow="true">
+                        <ChildContent>
+                            <span class="episode-badge-tooltip-anchor">
+                                <button type="button"
+                                        class="episode-badge episode-badge-missing episode-badge-action @phaseClass @(activeSearch ? "episode-badge-searching" : null)"
+                                        aria-label="@tooltipSummary"
+                                        disabled="@activeSearch"
+                                        @onclick="() => HandleMissingEpisodeAsync(missingSeriesId, missingSeason, episode)"
+                                        @onclick:stopPropagation="true">
+                                    <span class="episode-badge-number">@episode</span>
+                                    @if (searchStatus is not null || _searchingEpisode == episode)
+                                    {
+                                        <span class="episode-badge-status" aria-hidden="true">
+                                            <MudIcon Icon="@(_searchingEpisode == episode && searchStatus is null
+                                                              ? Icons.Material.Filled.Search
+                                                              : GetPhaseIcon(searchStatus?.Phase ?? EpisodeSearchPhase.Searching))"
+                                                     Size="Size.Small" />
+                                        </span>
+                                    }
+                                </button>
+                            </span>
+                        </ChildContent>
+                        <TooltipContent>
+                            <div class="episode-badge-tooltip">
+                                @foreach (var line in tooltipLines)
+                                {
+                                    <div>@line</div>
+                                }
+                            </div>
+                        </TooltipContent>
+                    </MudTooltip>
+                }
+                else if (unaired)
+                {
+                    <span class="episode-badge episode-badge-unaired" title="@airLabel">
+                        @episode
+                    </span>
+                }
+                else
+                {
+                    <span class="episode-badge @(recent ? "episode-badge-recent" : null)" title="@(recent ? "Just downloaded" : null)">
+                        @episode
+                    </span>
+                }
             }
         </div>
 
@@ -54,6 +127,21 @@
     private int _pageIndex;
     private string? _lastItemId;
     private int? _searchingEpisode;
+
+    protected override void OnInitialized()
+    {
+        SearchTracker.StatusChanged += OnSearchStatusChanged;
+    }
+
+    private void OnSearchStatusChanged(EpisodeSearchNotification notification)
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        SearchTracker.StatusChanged -= OnSearchStatusChanged;
+    }
 
     private bool HasNextPage
     {
@@ -85,52 +173,13 @@
             _pageIndex++;
     }
 
-    private RenderFragment RenderEpisodeBadge(int episode) => __builder =>
+    private static string GetPhaseIcon(EpisodeSearchPhase phase) => EpisodeSearchDisplayHelper.GetStatusIcon(phase) switch
     {
-        var recentEpisodes = Item.EpisodeNumbers ?? [];
-        var onDiskEpisodes = Item.OnDiskEpisodeNumbers;
-        var unairedEpisodes = Item.UnairedEpisodeNumbers;
-        var unaired = DownloadDisplayHelper.IsUnairedEpisode(episode, unairedEpisodes);
-        var missing = !unaired &&
-                      DownloadDisplayHelper.IsMissingOnDisk(episode, onDiskEpisodes, recentEpisodes);
-        var recent = !unaired && !missing && recentEpisodes.Contains(episode);
-        var airLabel = DownloadDisplayHelper.GetEpisodeAirLabel(episode, Item.EpisodeAirDates);
-
-        if (ShowMissingEpisodes && missing && Item.SeriesId is int seriesId && Item.SeasonNumber is int season)
-        {
-            var searching = _searchingEpisode == episode;
-            var missingTitle = Prefs.Current.MissingEpisodeClickAction == MissingEpisodeClickAction.OpenSonarrAndSearch
-                ? "Open Sonarr and search for this episode"
-                : "Search Sonarr for this episode";
-            __builder.OpenElement(0, "button");
-            __builder.AddAttribute(1, "type", "button");
-            __builder.AddAttribute(2, "class", $"episode-badge episode-badge-missing episode-badge-action{(searching ? " episode-badge-searching" : "")}");
-            __builder.AddAttribute(3, "title", missingTitle);
-            __builder.AddAttribute(4, "disabled", searching);
-            __builder.AddAttribute(5, "onclick", EventCallback.Factory.Create(this, () => HandleMissingEpisodeAsync(seriesId, season, episode)));
-            __builder.AddEventStopPropagationAttribute(6, "onclick", true);
-            __builder.AddContent(7, episode);
-            __builder.CloseElement();
-            return;
-        }
-
-        if (unaired)
-        {
-            __builder.OpenElement(8, "span");
-            __builder.AddAttribute(9, "class", "episode-badge episode-badge-unaired");
-            if (!string.IsNullOrWhiteSpace(airLabel))
-                __builder.AddAttribute(10, "title", airLabel);
-            __builder.AddContent(11, episode);
-            __builder.CloseElement();
-            return;
-        }
-
-        __builder.OpenElement(12, "span");
-        __builder.AddAttribute(13, "class", recent ? "episode-badge episode-badge-recent" : "episode-badge");
-        if (recent)
-            __builder.AddAttribute(14, "title", "Just downloaded");
-        __builder.AddContent(15, episode);
-        __builder.CloseElement();
+        "download" => Icons.Material.Filled.Download,
+        "check" => Icons.Material.Filled.Check,
+        "search_off" => Icons.Material.Filled.SearchOff,
+        "schedule" => Icons.Material.Filled.Schedule,
+        _ => Icons.Material.Filled.Search
     };
 
     private async Task HandleMissingEpisodeAsync(int seriesId, int seasonNumber, int episodeNumber)
@@ -140,6 +189,9 @@
             Snackbar.Add("Sonarr is disabled in settings.", Severity.Warning);
             return;
         }
+
+        if (SearchTracker.GetStatus(seriesId, seasonNumber, episodeNumber)?.IsActive == true)
+            return;
 
         var label = FormatEpisodeSearchLabel(seasonNumber, episodeNumber);
         var action = Prefs.Current.MissingEpisodeClickAction;
@@ -152,8 +204,11 @@
             if (action == MissingEpisodeClickAction.OpenSonarrAndSearch)
             {
                 Snackbar.Add($"Searching Sonarr for {label}…", Severity.Info);
-                var (ok, message) = await Sonarr.SearchEpisodeAsync(seriesId, seasonNumber, episodeNumber, CancellationToken.None);
+                var (ok, message, episodeId, commandId) = await Sonarr.SearchEpisodeAsync(seriesId, seasonNumber, episodeNumber, CancellationToken.None);
                 Snackbar.Add(message, ok ? Severity.Success : Severity.Warning);
+
+                if (ok && episodeId is int id)
+                    SearchTracker.Track(new EpisodeSearchRequest(seriesId, seasonNumber, episodeNumber, id, commandId, label));
 
                 var url = ResolveSonarrUrl();
                 if (url is not null)
@@ -162,8 +217,11 @@
             else
             {
                 Snackbar.Add($"Searching Sonarr for {label}…", Severity.Info);
-                var (ok, message) = await Sonarr.SearchEpisodeAsync(seriesId, seasonNumber, episodeNumber, CancellationToken.None);
+                var (ok, message, episodeId, commandId) = await Sonarr.SearchEpisodeAsync(seriesId, seasonNumber, episodeNumber, CancellationToken.None);
                 Snackbar.Add(ok ? $"Search queued for {label}" : message, ok ? Severity.Success : Severity.Warning);
+
+                if (ok && episodeId is int id)
+                    SearchTracker.Track(new EpisodeSearchRequest(seriesId, seasonNumber, episodeNumber, id, commandId, label));
             }
         }
         catch (Exception ex)

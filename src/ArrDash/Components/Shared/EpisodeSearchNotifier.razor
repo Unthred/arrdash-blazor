@@ -1,0 +1,27 @@
+@inject EpisodeSearchTrackerService Tracker
+@inject ISnackbar Snackbar
+@implements IDisposable
+
+@code {
+    protected override void OnInitialized()
+    {
+        Tracker.StatusChanged += OnStatusChanged;
+    }
+
+    private void OnStatusChanged(EpisodeSearchNotification notification)
+    {
+        if (notification.Phase is EpisodeSearchPhase.Queued or EpisodeSearchPhase.Searching)
+            return;
+
+        _ = InvokeAsync(() =>
+        {
+            Snackbar.Add(notification.Message, notification.Severity);
+            return Task.CompletedTask;
+        });
+    }
+
+    public void Dispose()
+    {
+        Tracker.StatusChanged -= OnStatusChanged;
+    }
+}

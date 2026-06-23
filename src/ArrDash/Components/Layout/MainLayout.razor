@@ -1,12 +1,15 @@
 @inherits LayoutComponentBase
 @inject ThemeService ThemeService
 @inject LayoutPreferencesService Prefs
+@inject LayoutSettingsSaveService PreviewSave
+@inject ISnackbar Snackbar
 @implements IDisposable
 
 <MudThemeProvider @key="_themeKey" Theme="_theme" IsDarkMode="_isDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
+<EpisodeSearchNotifier />
 
 <div class="@RootClass" style="@RootStyle">
     <CascadingValue Value="_kiosk">
@@ -25,16 +28,29 @@
                 <div class="header-actions">
                     @if (Prefs.IsPreviewActive)
                     {
-                        <MudChip T="string" Size="Size.Small" Color="Color.Warning" Variant="Variant.Outlined">Unsaved preview</MudChip>
+                        <MudButton Variant="Variant.Filled"
+                                   Color="Color.Warning"
+                                   Size="Size.Small"
+                                   StartIcon="@Icons.Material.Filled.Save"
+                                   Disabled="_savingPreview"
+                                   OnClick="SavePreviewAsync">
+                            @(_savingPreview ? "Saving…" : "Save preview")
+                        </MudButton>
+                        <MudButton Variant="Variant.Outlined"
+                                   Color="Color.Primary"
+                                   Size="Size.Small"
+                                   Href="/settings">
+                            Back to settings
+                        </MudButton>
                     }
                     <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined" Class="live-chip">
                         <span class="pulse-dot"></span> Live
                     </MudChip>
                     <MudTooltip Text="Settings">
-                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" Href="/settings" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" Href="/settings" Class="header-icon-btn" />
                     </MudTooltip>
                     <MudTooltip Text="Kiosk mode">
-                        <MudIconButton Icon="@Icons.Material.Filled.Tv" Color="Color.Inherit" OnClick="ToggleKiosk" />
+                        <MudIconButton Icon="@Icons.Material.Filled.Tv" Color="Color.Default" OnClick="ToggleKiosk" Class="header-icon-btn" />
                     </MudTooltip>
                 </div>
             </MudAppBar>
@@ -44,8 +60,8 @@
             <div class="kiosk-bar">
                 <div class="brand-title">ArrDash Kiosk</div>
                 <MudSpacer />
-                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Inherit" Href="/settings" />
-                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Inherit" OnClick="ToggleKiosk" />
+                <MudIconButton Icon="@Icons.Material.Filled.Settings" Color="Color.Default" Href="/settings" Class="header-icon-btn" />
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Color="Color.Default" OnClick="ToggleKiosk" Class="header-icon-btn" />
             </div>
         }
 
@@ -61,6 +77,7 @@
     private string _themeKey = ThemeBuilder.GetThemeCacheKey(new UserLayoutPreferences());
     private bool _isDarkMode = true;
     private bool _kiosk;
+    private bool _savingPreview;
     private string BrandMark = "A";
     private string RootStyle = "";
 
@@ -125,6 +142,28 @@
         _kiosk = !_kiosk;
         await Prefs.ToggleKioskAsync(_kiosk);
         StateHasChanged();
+    }
+
+    private async Task SavePreviewAsync()
+    {
+        if (!Prefs.IsPreviewActive || _savingPreview)
+            return;
+
+        _savingPreview = true;
+        try
+        {
+            await PreviewSave.SavePreviewAsync(CancellationToken.None);
+            Snackbar.Add("Settings saved.", Severity.Success);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"Save failed: {ex.Message}", Severity.Error);
+        }
+        finally
+        {
+            _savingPreview = false;
+            StateHasChanged();
+        }
     }
 
     public void Dispose()

@@ -6,6 +6,9 @@
     <RootNamespace>ArrDash</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <InternalsVisibleTo Include="ArrDash.Tests" />
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.11" />
     <PackageReference Include="MudBlazor" Version="7.16.0" />
   </ItemGroup>
